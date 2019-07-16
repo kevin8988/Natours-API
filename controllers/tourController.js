@@ -57,8 +57,6 @@ exports.updateTour = (req, res) => {
     });
   }
 
-  const tour = tours.find(el => el.id === id);
-
   res.status(200).send({ status: 'success', data: { tour: 'Updated tour...' } });
 };
 
@@ -71,8 +69,6 @@ exports.deleteTour = (req, res) => {
       message: 'Invalid ID'
     });
   }
-
-  const tour = tours.find(el => el.id === id);
 
   res.status(204).send({ status: 'success', data: null });
 };
