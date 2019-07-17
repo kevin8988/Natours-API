@@ -13,8 +13,18 @@ exports.checkID = (req, res, next, value) => {
   next();
 };
 
+exports.checkBody = (req, res, next) => {
+  const body = req.body;
+  console.log(body);
+  if (!body.name) {
+    return res.status(404).json({ status: 'fail', message: 'Name property missing' });
+  } else if (!body.price) {
+    return res.status(404).json({ status: 'fail', message: 'Price property missing' });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
-  console.log(req.requestTime);
   res.status(200).json({
     status: 'success',
     results: tours.length,
