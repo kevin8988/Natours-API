@@ -1,19 +1,13 @@
 exports.checkID = (req, res, next, value) => {
-  const id = value * 1;
-  if (id >= tours.length) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Invalid ID'
-    });
-  }
   next();
 };
 
 exports.checkBody = (req, res, next) => {
-  const body = req.body;
+  const { body } = req.body;
   if (!body.name) {
     return res.status(400).json({ status: 'fail', message: 'Name property missing' });
-  } else if (!body.price) {
+  }
+  if (!body.price) {
     return res.status(400).json({ status: 'fail', message: 'Price property missing' });
   }
   next();
