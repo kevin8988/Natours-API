@@ -1,7 +1,12 @@
 const tourDAO = require('./../DAOs/tourDAO');
 
-exports.getAllTours = (req, res) => {
-  res.status(500).json({ status: 'error', message: 'This route is not defined yet' });
+exports.getAllTours = async (req, res) => {
+  try {
+    const tours = await tourDAO.getAllTours();
+    res.status(200).json({ status: 'success', results: tours.length, data: tours });
+  } catch (error) {
+    res.status(404).json({ status: 'fail', message: error });
+  }
 };
 exports.createTour = async (req, res) => {
   try {
