@@ -5,9 +5,16 @@ exports.createTour = async data => {
   return newTour;
 };
 
-exports.getAllTours = async () => {
-  const allTours = await Tour.find();
-  return allTours;
+exports.getAllTours = async param => {
+  //Build the query
+  const queryObj = { ...param };
+  const excludedFields = ['page', 'sort', 'limit', 'fields'];
+  excludedFields.forEach(el => delete queryObj[el]);
+  const query = Tour.find(queryObj);
+
+  //Execute the query
+  const tours = await query;
+  return tours;
 };
 
 exports.getTour = async id => {
