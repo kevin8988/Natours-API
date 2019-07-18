@@ -14,3 +14,11 @@ exports.getTour = async id => {
   const tour = await Tour.findById(id);
   return tour;
 };
+
+exports.updateTour = async (id, data) => {
+  const updatedTour = await Tour.findByIdAndUpdate(id, data, {
+    new: true,
+    runValidators: true
+  });
+  return updatedTour;
+};
