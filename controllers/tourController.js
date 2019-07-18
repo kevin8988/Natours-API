@@ -16,8 +16,13 @@ exports.createTour = async (req, res) => {
     res.status(400).json({ status: 'fail', message: 'Invalid data sent!' });
   }
 };
-exports.getTour = (req, res) => {
-  res.status(500).json({ status: 'error', message: 'This route is not defined yet' });
+exports.getTour = async (req, res) => {
+  try {
+    const tour = await tourDAO.getTour(req.params.id);
+    res.status(200).json({ status: 'success', data: { tour } });
+  } catch (error) {
+    res.status(400).json({ status: 'fail', message: error });
+  }
 };
 exports.deleteTour = (req, res) => {
   res.status(500).json({ status: 'error', message: 'This route is not defined yet' });
