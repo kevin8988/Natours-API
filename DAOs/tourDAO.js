@@ -22,3 +22,8 @@ exports.updateTour = async (id, data) => {
   });
   return updatedTour;
 };
+
+exports.deleteTour = async id => {
+  const deletedTour = await Tour.findByIdAndDelete(id);
+  return deletedTour;
+};

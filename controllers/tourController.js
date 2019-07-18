@@ -24,8 +24,13 @@ exports.getTour = async (req, res) => {
     res.status(400).json({ status: 'fail', message: error });
   }
 };
-exports.deleteTour = (req, res) => {
-  res.status(500).json({ status: 'error', message: 'This route is not defined yet' });
+exports.deleteTour = async (req, res) => {
+  try {
+    await tourDAO.deleteTour(req.params.id);
+    res.status(204).json({ status: 'success', data: null });
+  } catch (error) {
+    res.status(400).json({ status: 'fail', message: error });
+  }
 };
 exports.updateTour = async (req, res) => {
   try {
