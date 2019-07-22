@@ -47,3 +47,22 @@ exports.updateTour = async (req, res) => {
     res.status(400).json({ status: 'fail', message: error });
   }
 };
+
+exports.getTourStats = async (req, res) => {
+  try {
+    const status = await tourDAO.tourStats();
+    res.status(200).json({ status: 'success', data: { status } });
+  } catch (error) {
+    res.status(400).json({ status: 'fail', message: error });
+  }
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const year = req.params.year * 1;
+    const plan = await tourDAO.getMonthlyPlan(year);
+    res.status(200).json({ status: 'success', data: { plan } });
+  } catch (error) {
+    res.status(400).json({ status: 'fail', message: error });
+  }
+};
