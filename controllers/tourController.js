@@ -1,5 +1,10 @@
 const tourDAO = require('./../DAOs/tourDAO');
 
+exports.aliasTopTour = (req, res, next) => {
+  req.query = { limit: 5, sort: '-ratingsAverage price', fields: 'name price ratingsAverage summary difficulty' };
+  next();
+};
+
 exports.getAllTours = async (req, res) => {
   try {
     const tours = await tourDAO.getAllTours(req.query);
