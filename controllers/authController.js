@@ -1,6 +1,13 @@
 const jwt = require('jsonwebtoken');
 const userDAO = require('./../DAOs/userDAO');
 const catchAsync = require('./../utils/CatchAsync');
+const AppError = require('./../utils/AppError');
+
+const signToken = id => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN
+  });
+};
 
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await userDAO.createUser({
@@ -10,9 +17,23 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm
   });
 
-  const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
-  });
+  const token = signToken(newUser._id);
 
   res.status(201).json({ status: 'success', token, data: { user: newUser } });
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { password, email } = req.body;
+
+  if (!password || !email) return next(new AppError('Please provide email and password', 400));
+
+  const user = await userDAO.getUserByEmail(email);
+
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError('Incorrect email/password', 401));
+  }
+
+  const token = signToken(user._id);
+
+  res.status(200).json({ status: 'success', token });
 });
