@@ -1,3 +1,4 @@
+const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const userDAO = require('./../DAOs/userDAO');
 const catchAsync = require('./../utils/CatchAsync');
@@ -47,15 +48,26 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
   }
-
-  // 2. Verify the token
   if (!token) {
     return next(new AppError('You are not logged in!', 401));
   }
 
+  // 2. Verify the token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
   // 3. Check if users still exists
+  const freshUser = await userDAO.getUser(decoded.id);
+
+  if (!freshUser) {
+    return next(new AppError('The token belonging to this user does no longer exist.', 401));
+  }
 
   // 4. Check if user changed password after the token was issued
+  if (freshUser.changedPasswordAfter(decoded.iat)) {
+    return next(new AppError('User recently changed password. Please log in again', 401));
+  }
 
+  // 5. Grant access to protected route
+  req.user = freshUser;
   next();
 });

@@ -20,3 +20,8 @@ exports.getUsers = async query => {
   const users = await feature.query;
   return users;
 };
+
+exports.getUser = async id => {
+  const user = await User.findById(id);
+  return user;
+};
