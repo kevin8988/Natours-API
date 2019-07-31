@@ -1,4 +1,5 @@
 const { promisify } = require('util');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const userDAO = require('./../DAOs/userDAO');
 const catchAsync = require('./../utils/CatchAsync');
@@ -114,4 +115,29 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', message: 'Token sent to email!' });
 });
 
-exports.resetPassword = catchAsync(async (req, res, next) => {});
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const resetToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  // 1. Get user based on token
+  const user = await userDAO.getUserByResetToken(resetToken);
+
+  // 2.If token not expired and there is a user, set new password
+  if (!user) {
+    return next(new AppError('Token is invalid or has expired', 404));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  // 3. Update changedPasswordAt for current users
+
+  // 4. Log in the user
+  const token = signToken(user.id);
+  res.status(200).json({ status: 'success', token });
+});

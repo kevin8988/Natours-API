@@ -25,3 +25,8 @@ exports.getUser = async id => {
   const user = await User.findById(id);
   return user;
 };
+
+exports.getUserByResetToken = async token => {
+  const user = await User.findOne({ passwordResetToken: token, passwordResetExpires: { $gt: Date.now() } });
+  return user;
+};
