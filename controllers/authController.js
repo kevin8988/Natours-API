@@ -81,3 +81,21 @@ exports.restrictTo = (...roles) => {
     next();
   });
 };
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  // 1. Get user based on posted email
+  const user = await userDAO.getUserByEmail(req.body.email);
+  if (!user) {
+    return next(new AppError('User email not found', 404));
+  }
+
+  // 2. Generate the random tokens
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  // 3. Sent it to user's email
+
+  res.status(200).json({ status: 'success' });
+});
+
+exports.resetPassword = catchAsync(async (req, res, next) => {});
