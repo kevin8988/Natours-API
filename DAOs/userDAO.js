@@ -30,3 +30,11 @@ exports.getUserByResetToken = async token => {
   const user = await User.findOne({ passwordResetToken: token, passwordResetExpires: { $gt: Date.now() } });
   return user;
 };
+
+exports.updateMe = async (id, data) => {
+  const user = await User.findByIdAndUpdate(id, data, {
+    runValidators: true,
+    new: true
+  });
+  return user;
+};
