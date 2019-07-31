@@ -24,6 +24,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', data: { user } });
 });
 
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await userDAO.deleteMe(req.user.id);
+  res.status(204).json({ status: 'success', data: null });
+});
+
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await userDAO.getUsers(req.query);
   res.status(200).json({ status: 'success', results: users.length, data: { users } });

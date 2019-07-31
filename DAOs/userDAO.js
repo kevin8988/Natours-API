@@ -38,3 +38,7 @@ exports.updateMe = async (id, data) => {
   });
   return user;
 };
+
+exports.deleteMe = async id => {
+  await User.findByIdAndUpdate(id, { active: false });
+};
