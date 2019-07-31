@@ -12,6 +12,11 @@ const signToken = id => {
   });
 };
 
+const createSentToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({ status: 'success', token, data: { user } });
+};
+
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await userDAO.createUser({
     name: req.body.name,
@@ -19,10 +24,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm
   });
-
-  const token = signToken(newUser._id);
-
-  res.status(201).json({ status: 'success', token, data: { user: newUser } });
+  createSentToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -39,9 +41,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   // 3. Generate the token and send to client
-  const token = signToken(user._id);
-
-  res.status(200).json({ status: 'success', token });
+  createSentToken(user, 200, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -138,6 +138,23 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // 3. Update changedPasswordAt for current users
 
   // 4. Log in the user
-  const token = signToken(user.id);
-  res.status(200).json({ status: 'success', token });
+  createSentToken(user, 200, res);
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1. Get the user from the collection
+  const user = await userDAO.getUserByEmail(req.user.email);
+
+  // 2. Check if posted current password is correctPassword
+  if (!(await user.correctPassword(req.body.password, user.password))) {
+    return next(new AppError('Wrong password!', 401));
+  }
+
+  // 3. If is correct update passwordConfirm
+  user.password = req.body.newPassword;
+  user.passwordConfirm = req.body.newPasswordConfirm;
+  await user.save();
+
+  // 4. Log user in, send JWT
+  createSentToken(user, 200, res);
 });
