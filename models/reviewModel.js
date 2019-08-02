@@ -22,7 +22,11 @@ const reviewSchema = new mongoose.Schema(
       required: [true, 'Review must belong to a user']
     }
   },
-  { timestamps: true, toJSON: true, toObject: true }
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    timestamps: true
+  }
 );
 
 const Review = mongoose.model('Review', reviewSchema);
