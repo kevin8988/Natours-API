@@ -7,7 +7,10 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 });
 
 exports.createReview = catchAsync(async (req, res, next) => {
-  const data = Object.assign({ user: req.user.id }, { review: req.body.review, rating: req.body.rating, tour: req.body.tour });
-  const review = await reviewDAO.createReview(data);
-  res.status(201).json({ status: 'success', data: { review } });
+  // Allow nested routes
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
+
+  const newReview = await reviewDAO.createReview(req.body);
+  res.status(201).json({ status: 'success', data: { review: newReview } });
 });
