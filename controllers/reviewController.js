@@ -7,6 +7,7 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 });
 
 exports.createReview = catchAsync(async (req, res, next) => {
-  const review = await reviewDAO.createReview(req.body);
+  const data = Object.assign({ user: req.user.id }, { review: req.body.review, rating: req.body.rating, tour: req.body.tour });
+  const review = await reviewDAO.createReview(data);
   res.status(201).json({ status: 'success', data: { review } });
 });
