@@ -31,14 +31,11 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   res.status(204).json({ status: 'success', data: null });
 });
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await userDAO.getUsers(req.query);
-  res.status(200).json({ status: 'success', results: users.length, data: { users } });
-});
-
 exports.createUser = catchAsync(async (req, res, next) => {
   next(new AppError('Please use sign up to create user', 400));
 });
+
+exports.getAllUsers = factory.getAll(User);
 
 exports.getUser = factory.getOne(User);
 
