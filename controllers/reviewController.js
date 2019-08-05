@@ -1,5 +1,7 @@
 const catchAsync = require('./../utils/CatchAsync');
 const reviewDAO = require('./../DAOs/reviewDAO');
+const factory = require('./handlerFactory');
+const Review = require('./../models/reviewModel');
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
   let filter = {};
@@ -16,3 +18,5 @@ exports.createReview = catchAsync(async (req, res, next) => {
   const newReview = await reviewDAO.createReview(req.body);
   res.status(201).json({ status: 'success', data: { review: newReview } });
 });
+
+exports.deleteReview = factory.deleteOne(Review);
