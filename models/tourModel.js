@@ -150,7 +150,7 @@ tourSchema.pre(/^find/, function(next) {
 });
 
 tourSchema.pre(/^find/, function(next) {
-  this.populate({ path: 'guides reviews', select: '-__v -passwordChangedAt' });
+  this.populate({ path: 'guides', select: '-__v -passwordChangedAt' });
   next();
 });
 
