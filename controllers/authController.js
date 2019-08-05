@@ -1,7 +1,7 @@
 const { promisify } = require('util');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const userDAO = require('./../DAOs/userDAO');
+const User = require('./../models/userModel');
 const catchAsync = require('./../utils/CatchAsync');
 const AppError = require('./../utils/AppError');
 const sendEmail = require('./../utils/email');
@@ -28,7 +28,7 @@ const createSentToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await userDAO.createUser({
+  const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
@@ -49,7 +49,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // 1. Verify if has a password and email
   if (!password || !email) return next(new AppError('Please provide email and password', 400));
 
-  const user = await userDAO.getUserByEmail(email);
+  const user = await User.findOne({ email }).select('+password');
 
   // 2. Verify if has a valid email and password
   if (!user || !(await user.correctPassword(password, user.password))) {
@@ -74,7 +74,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // 3. Check if users still exists
-  const freshUser = await userDAO.getUser(decoded.id);
+  const freshUser = await User.findById(decoded.id);
 
   if (!freshUser) {
     return next(new AppError('The token belonging to this user does no longer exist.', 401));
@@ -102,7 +102,7 @@ exports.restrictTo = (...roles) => {
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1. Get user based on posted email
-  const user = await userDAO.getUserByEmail(req.body.email);
+  const user = await User.findOne({ email: req.body.email }).select('+password');
   if (!user) {
     return next(new AppError('User email not found', 404));
   }
@@ -138,8 +138,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .digest('hex');
 
   // 1. Get user based on token
-  const user = await userDAO.getUserByResetToken(resetToken);
-
+  const user = await User.findOne({ passwordResetToken: resetToken, passwordResetExpires: { $gt: Date.now() } });
   // 2.If token not expired and there is a user, set new password
   if (!user) {
     return next(new AppError('Token is invalid or has expired', 404));
@@ -159,7 +158,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
   // 1. Get the user from the collection
-  const user = await userDAO.getUserByEmail(req.user.email);
+  const user = await User.findOne({ email: req.body.email });
 
   // 2. Check if posted current password is correctPassword
   if (!(await user.correctPassword(req.body.password, user.password))) {

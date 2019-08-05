@@ -1,5 +1,4 @@
 const catchAsync = require('./../utils/CatchAsync');
-const userDAO = require('./../DAOs/userDAO');
 const AppError = require('./../utils/AppError');
 const factory = require('./handlerFactory');
 const User = require('./../models/userModel');
@@ -21,13 +20,16 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   const filteredBody = filterObj(req.body, 'name', 'email');
 
   // 2. Update user document
-  const user = await userDAO.updateMe(req.user.id, filteredBody);
+  const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
+    runValidators: true,
+    new: true
+  });
 
   res.status(200).json({ status: 'success', data: { user } });
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
-  await userDAO.deleteMe(req.user.id);
+  await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({ status: 'success', data: null });
 });
 

@@ -1,4 +1,3 @@
-const tourDAO = require('./../DAOs/tourDAO');
 const Tour = require('./../models/tourModel');
 const catchAsync = require('./../utils/CatchAsync');
 const factory = require('./handlerFactory');
