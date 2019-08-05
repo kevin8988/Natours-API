@@ -33,15 +33,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
 
 exports.deleteTour = factory.deleteOne(Tour);
 
-exports.updateTour = catchAsync(async (req, res, next) => {
-  const tour = await tourDAO.updateTour(req.params.id, req.body);
-
-  if (!tour) {
-    return next(new AppError('No tour found with that id', 404));
-  }
-
-  res.status(200).json({ status: 'success', data: { tour } });
-});
+exports.updateTour = factory.updateOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const status = await tourDAO.tourStats();
