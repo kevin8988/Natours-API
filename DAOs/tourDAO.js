@@ -17,7 +17,7 @@ exports.getAllTours = async query => {
 };
 
 exports.getTour = async id => {
-  const tour = await Tour.findById(id).populate('reviews');
+  const tour = await Tour.findById(id);
   return tour;
 };
 

@@ -5,7 +5,7 @@ exports.createReview = async data => {
   return review;
 };
 
-exports.getAllReviews = async () => {
-  const reviews = await Review.find();
+exports.getAllReviews = async filter => {
+  const reviews = await Review.find(filter);
   return reviews;
 };

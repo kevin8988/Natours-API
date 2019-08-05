@@ -2,7 +2,9 @@ const catchAsync = require('./../utils/CatchAsync');
 const reviewDAO = require('./../DAOs/reviewDAO');
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
-  const reviews = await reviewDAO.getAllReviews();
+  let filter = {};
+  if (req.params.tourId) filter = { tour: req.params.tourId };
+  const reviews = await reviewDAO.getAllReviews(filter);
   res.status(200).json({ status: 'success', results: reviews.length, data: { reviews } });
 });
 
