@@ -16,10 +16,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', results: tours.length, data: { tours } });
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await tourDAO.createTour(req.body);
-  res.status(201).json({ status: 'success', data: { tour: newTour } });
-});
+exports.createTour = factory.createOne(Tour);
 
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await tourDAO.getTour(req.params.id);
