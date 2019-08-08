@@ -1,6 +1,7 @@
 const Tour = require('./../models/tourModel');
 const catchAsync = require('./../utils/CatchAsync');
 const factory = require('./handlerFactory');
+const AppError = require('./../utils/AppError');
 
 exports.getAllTours = factory.getAll(Tour);
 
@@ -12,9 +13,19 @@ exports.deleteTour = factory.deleteOne(Tour);
 
 exports.updateTour = factory.updateOne(Tour);
 
+//tours-within/233/center/-40,45/unit/mi
 exports.getToursWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;
-  console.log(distance, latlng, unit);
+  const [lat, lng] = latlng.split(',');
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+
+  if (!lat || !lng) {
+    next(new AppError('Please provide latitude and longitude in the format lag,lng', 400));
+  }
+
+  const tours = await Tour.find({ startLocation: { $geoWithin: { $centerShpere: [[lng, lat], radius] } } });
+
+  res.status(200).json({ status: 'success', results: tours.length, data: { data: tours } });
 });
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
