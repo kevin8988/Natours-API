@@ -12,6 +12,11 @@ exports.deleteTour = factory.deleteOne(Tour);
 
 exports.updateTour = factory.updateOne(Tour);
 
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  console.log(distance, latlng, unit);
+});
+
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const status = await Tour.aggregate([
     {
