@@ -13,7 +13,7 @@ exports.getAll = Model =>
       .sort()
       .limitFields()
       .paginate();
-    const docs = await feature.query;
+    const docs = await feature.query.explain();
     res.status(200).json({ status: 'success', results: docs.length, data: { data: docs } });
   });
 
