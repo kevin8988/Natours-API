@@ -28,6 +28,8 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', results: tours.length, data: { data: tours } });
 });
 
+exports.getDistances = catchAsync(async (req, res, next) => {});
+
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const status = await Tour.aggregate([
     {
