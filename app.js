@@ -53,7 +53,10 @@ app.use(hpp({ whitelist: ['duration', 'ratingsAverage', 'ratingsQuantity', 'maxG
 
 //2. Routes
 app.get('/', (req, res) => {
-  res.status(200).render('base');
+  res.status(200).render('base', {
+    tour: 'The Forest Hiker',
+    user: 'Jonas'
+  });
 });
 
 app.use('/api/v1/tours', tourRouter);
