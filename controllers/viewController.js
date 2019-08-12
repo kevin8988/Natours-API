@@ -2,8 +2,12 @@ const Tour = require('./../models/tourModel');
 const catchAsync = require('./../utils/CatchAsync');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
+  let filter = {};
+
+  if (req.query.name) filter = { name: new RegExp(req.query.name, 'i') };
+
   // 1. Get our data from collection
-  const tours = await Tour.find();
+  const tours = await Tour.find(filter);
   // 2. Build template
 
   // 3. Render that template using de tour data
