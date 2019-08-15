@@ -12,7 +12,6 @@ const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/userRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
-const viewRouter = require('./routes/viewRoutes');
 
 const AppError = require('./utils/AppError');
 
@@ -59,7 +58,6 @@ app.use(xss());
 app.use(hpp({ whitelist: ['duration', 'ratingsAverage', 'ratingsQuantity', 'maxGroupSize', 'difficulty', 'price'] }));
 
 //2. Routes
-app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
