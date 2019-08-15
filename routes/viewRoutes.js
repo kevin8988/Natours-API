@@ -7,4 +7,6 @@ router.route('/').get(viewController.getOverview);
 
 router.route('/tours/:tourSlug').get(viewController.getTour);
 
+router.route('/login').get(viewController.login);
+
 module.exports = router;
