@@ -15,7 +15,7 @@ const signToken = id => {
 const createSentToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
-    expires: new Date(Date.now() + process.env.JWT_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
     httpOnly: true
   };
 
@@ -65,7 +65,10 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 1. Getting token and check it's there
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
+
   if (!token) {
     return next(new AppError('You are not logged in!', 401));
   }
